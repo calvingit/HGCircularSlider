@@ -181,7 +181,7 @@ open class CircularSlider: UIControl {
      * The default value of this property is 0.5
      */
     @IBInspectable
-    @objc open var endPointValue: CGFloat = 0.5 {
+    open var endPointValue: CGFloat = 0.5 {
         didSet {
             if oldValue == endPointValue {
                 return
@@ -267,7 +267,22 @@ open class CircularSlider: UIControl {
     }
     
     // MARK: User interaction methods
-    
+    override open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let valuesInterval = Interval(min: minimumValue, max: maximumValue, rounds: numberOfRounds)
+        let endAngle = CircularSliderHelper.scaleToAngle(value: endPointValue, inInterval: valuesInterval) + CircularSliderHelper.circleInitialAngle
+        let circle = Circle(origin: bounds.center, radius: self.radius)
+        let thumbOrigin = CircularSliderHelper.endPoint(fromCircle: circle, angle: endAngle)
+
+        var rect: CGRect
+        if let image = endThumbImage {
+            let imageSize = image.size
+            rect = CGRect(x: thumbOrigin.x - (imageSize.width / 2), y: thumbOrigin.y - (imageSize.height / 2), width: imageSize.width, height: imageSize.height)
+        } else {
+            rect = CGRect(x: thumbOrigin.x - thumbRadius/2, y: thumbOrigin.y - thumbRadius/2, width: thumbRadius, height: thumbRadius)
+        }
+
+        return rect.contains(point) ? self: nil
+    }
     /**
      See superclass documentation
      */
