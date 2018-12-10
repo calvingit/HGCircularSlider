@@ -180,6 +180,7 @@ open class CircularSlider: UIControl {
      *
      * The default value of this property is 0.5
      */
+    @IBInspectable
     open var endPointValue: CGFloat = 0.5 {
         didSet {
             if oldValue == endPointValue {
